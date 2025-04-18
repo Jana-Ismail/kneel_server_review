@@ -1,6 +1,6 @@
 import json
 from http.server import HTTPServer
-from nss_handler import HandleRequests, status
+from request_handler import HandleRequests, status
 
 from views import list_metals, retrieve_metal, update_metal
 from views import list_sizes, retrieve_size
