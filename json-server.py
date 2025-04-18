@@ -5,7 +5,7 @@ from nss_handler import HandleRequests, status
 from views import list_metals, retrieve_metal
 from views import list_sizes, retrieve_size
 from views import list_styles, retrieve_style
-from views import list_orders, retrieve_order
+from views import list_orders, retrieve_order, create_order
 
 class JSONServer(HandleRequests):
     """Server class to handle incoming HTTP requests for kneel diamonds"""
@@ -56,7 +56,21 @@ class JSONServer(HandleRequests):
 
     def do_POST(self):
         """Method to handle POST requests from a client"""
-        pass
+        response_body = ""
+        url = self.parse_url(self.path)
+
+        content_len = int(self.headers.get('content-length', 0))
+        request_body = self.rfile.read(content_len)
+        request_body = json.loads(request_body)
+        
+        if url["requested_resource"] == "orders":
+            successfully_created = create_order(request_body)
+            if successfully_created:
+                return self.response(response_body, status.HTTP_201_SUCCESS_CREATED.value)
+
+            return self.response(response_body, status.HTTP_400_CLIENT_ERROR_BAD_REQUEST_DATA)
+        
+        return self.response(response_body, status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND)
 
     def do_DELETE(self):
         """Method to handle DELETE requests from a client"""
