@@ -58,3 +58,28 @@ def retrieve_metal(pk):
         serialized_metal = json.dumps(dict(query_results))
 
         return serialized_metal
+
+def update_metal(pk, metal_data):
+    """
+    Function to update a Metal record in the database when a client
+    'PUT' request is sent with the updated info of the Metal record
+
+    Returns: True if database rows affected > 0 or False if not
+    """
+    with sqlite3.connect("./kneel.sqlite3") as conn:
+        db_cursor = conn.cursor()
+
+        db_cursor.execute(
+            """
+                UPDATE Metals 
+                    SET
+                        metal = ?,
+                        price = ?
+                WHERE id = ?
+            """,
+            (metal_data['metal'], metal_data['price'], pk)
+        )
+
+        rows_affected = db_cursor.rowcount
+
+    return True if rows_affected > 0 else False

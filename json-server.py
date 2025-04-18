@@ -2,7 +2,7 @@ import json
 from http.server import HTTPServer
 from nss_handler import HandleRequests, status
 
-from views import list_metals, retrieve_metal
+from views import list_metals, retrieve_metal, update_metal
 from views import list_sizes, retrieve_size
 from views import list_styles, retrieve_style
 from views import list_orders, retrieve_order, create_order, delete_order
@@ -52,7 +52,23 @@ class JSONServer(HandleRequests):
 
     def do_PUT(self):
         """Method to handle PUT requests from a client"""
-        pass
+        response_body = ""
+        url = self.parse_url(self.path)
+        pk = url["pk"]
+
+        content_len = int(self.headers.get('content-length', 0))
+        request_body = self.rfile.read(content_len)
+        request_body = json.loads(request_body)
+
+        if url["requested_resource"] == "metals":
+            if pk != 0:
+                successfully_updated = update_metal(pk, request_body)
+                if successfully_updated:
+                    return self.response(response_body, status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value)
+
+                return self.response(response_body, status.HTTP_400_CLIENT_ERROR_BAD_REQUEST_DATA.value)
+            
+        return self.response("Requested resource not found.", status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND)
 
     def do_POST(self):
         """Method to handle POST requests from a client"""
