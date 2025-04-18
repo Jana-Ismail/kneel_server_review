@@ -84,4 +84,24 @@ def create_order(order_data):
         return True if rows_affected > 0 else False
 
 
-        
+def delete_order(pk):
+    """
+    Function to delete Order record from database for the Order that has an id
+    property that matches the pk sent by the client in the request url
+
+    Returns True if record is successfully deleted or False if not
+    """
+
+    with sqlite3.connect("./kneel.sqlite3") as conn:
+        db_cursor = conn.cursor()
+
+        db_cursor.execute(
+            """
+                DELETE FROM `Orders`
+                WHERE id = ?
+            """, (pk,)
+        )
+
+        num_rows_deleted = db_cursor.rowcount
+
+        return True if num_rows_deleted > 0 else False
