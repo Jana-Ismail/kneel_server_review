@@ -12,7 +12,43 @@ class JSONServer(HandleRequests):
 
     def do_GET(self):
         """Method to handle GET requests from a client"""
-        pass
+        response_body = ""
+        url = self.parse_url(self.path)
+
+        if url["requested_resource"] == "metals":
+            if url["pk"] != 0:
+                response_body = retrieve_metal(url['pk']) 
+                return self.response(response_body, status.HTTP_200_SUCCESS.value)
+            
+            response_body = list_metals()
+            return self.response(response_body, status.HTTP_200_SUCCESS.value)
+       
+        elif url["requested_resource"] == "sizes":
+            if url["pk"] != 0:
+                response_body = retrieve_size(url["pk"])
+                return self.response(response_body, status.HTTP_200_SUCCESS.value)
+            
+            response_body = list_sizes()
+            return self.response(response_body, status.HTTP_200_SUCCESS.value)
+        
+        elif url["requested_resource"] == "styles":
+            if url["pk"] != 0:
+                response_body = retrieve_style(url["pk"])
+                return self.response(response_body, status.HTTP_200_SUCCESS.value)
+            
+            response_body = list_styles()
+            return self.response(response_body, status.HTTP_200_SUCCESS.value)
+        
+        elif url["requested_resource"] == "orders":
+            if url["pk"] != 0:
+                response_body = retrieve_order(url["pk"])
+                return self.response(response_body, status.HTTP_200_SUCCESS.value)
+            
+            response_body = list_orders()
+            return self.response(response_body, status.HTTP_200_SUCCESS.value)
+
+        else:
+            return self.response(response_body, status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value)
 
     def do_PUT(self):
         """Method to handle PUT requests from a client"""

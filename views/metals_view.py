@@ -8,7 +8,28 @@ def list_metals():
 
     Returns: json-serialized list of metal dictionaries
     """
-    pass
+    with sqlite3.connect("./kneel.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+            SELECT
+                m.id,
+                m.metal,
+                m.price
+            FROM Metals m
+        """)
+        query_results = db_cursor.fetchall()
+
+        metals = []
+        for row in query_results:
+            metals.append(dict(row))
+        
+        serialized_metals = json.dumps(metals)
+
+        return serialized_metals
+
+
 
 def retrieve_metal(pk):
     """
@@ -17,4 +38,23 @@ def retrieve_metal(pk):
 
     Returns: json-serialized dictionary of a single Metal record
     """
-    pass
+    with sqlite3.connect("./kneel.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        db_cursor.execute(
+            """
+                SELECT
+                    m.id,
+                    m.metal,
+                    m.price
+                FROM Metals m
+                WHERE m.id = ?
+            """, (pk,)
+        )
+
+        query_results = db_cursor.fetchone()
+
+        serialized_metal = json.dumps(dict(query_results))
+
+        return serialized_metal

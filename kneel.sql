@@ -20,7 +20,7 @@ CREATE TABLE `Metals`
 CREATE TABLE `Sizes`
 (
     `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    `carets` NUMERIC(3, 2) NOT NULL,
+    `carats` NUMERIC(3, 2) NOT NULL,
     `price` NUMERIC(6, 2) NOT NULL
 );
 
